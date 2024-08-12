@@ -5,6 +5,13 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
     const mode = game_data.mode ?? searchParams('mode'), screen = game_data.screen ?? searchParams('screen');
     if (screen === 'place' && mode === 'scavenge') {
         const localStorageKey = `Toxic_Donut_s_Single_Village_Scavenging_Settings_${game_data.world}`;
+        const carryUnits = {
+            'spear': 25,
+            'sword': 15,
+            'axe': 10,
+            'light': 80,
+            'heavy': 50,
+        };
         const singleVillageScavengeSettings = JSON.parse(localStorage.getItem(localStorageKey)) ??
             {
                 units: {},
@@ -12,7 +19,7 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
                     'scavengeOption_1': true,
                     'scavengeOption_2': true,
                     'scavengeOption_3': true,
-                    'scavengeOption_4': true
+                    'scavengeOption_4': true,
                 }
             };
         const singleVillageFormulas = {
@@ -42,6 +49,8 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
                     .forEach(unit => {
                         const amount = parseInt($(`.candidate-squad-container .units-entry-all[data-unit="${unit}"]`).text().trim().replaceAll(/\(|\)/g, ''));
                         const inputValue = Math.round(amount * currentPercentage / 100);
+
+                        console.log(carryUnits[unit]);
 
                         $(`.unitsInput[name="${unit}"]`).val(inputValue).trigger("change");
                     });
