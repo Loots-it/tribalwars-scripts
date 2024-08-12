@@ -251,7 +251,7 @@ window.FarmGod.Translation = (function() {
                 distance : 'Maximaal aantal velden dat farms mogen lopen:',
                 time : 'Hoe veel tijd in minuten moet er tussen farms zitten:',
                 return: 'Maximum tijd waarop farms terug thuis moeten zijn:',
-                minWall: 'Minimum muur level:'
+                minWall: 'Minimum muur level:',
                 wall: 'Maximum muur level (indien bekend):',
                 losses : 'Verstuur farm naar dorpen met gedeeltelijke verliezen:',
                 maxloot : 'Verstuur een B farm als de buit vorige keer vol was:',
@@ -282,7 +282,7 @@ window.FarmGod.Translation = (function() {
                 distance : 'Maximum fields for farms:',
                 time : 'How much time in minutes should there be between farms:',
                 return: 'Maximum time by which farms must be returned:',
-                minWall: 'Minimum wall level:'
+                minWall: 'Minimum wall level:',
                 wall: 'Maximum wall level (if known):',
                 losses : 'Send farm to villages with partial losses:',
                 maxloot : 'Send a B farm if the last loot was full:',
