@@ -22,27 +22,34 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
                     'scavengeOption_4': true,
                 }
             };
-        const singleVillageFormulas = {
-            '1': {1: 100},
-            '2': {2: 100},
-            '3': {3: 100},
-            '4': {4: 100},
-            '1,2': {1: 100, 2: 28.57},
-            '1,2,3': {1: 100, 2: 28.57, 3: 12.5},
-            '1,2,3,4': {1: 100, 2: 28.57, 3: 12.5, 4: 7.69},
-            '2,3,4': {2: 100, 3: 33.33, 4: 18.18},
-            '3,4': {3: 100, 4: 40.00},
-            '2,3': {2: 100, 3: 33.33},
+
+        const farmRatios = {
+            1: 0.1,
+            2: 0.25,
+            3: 0.5,
+            4: 0.75,
+        };
+
+        const calculatePercentage = (selectedTypes) => {
+            let x = 100;
+            for (let i = 1; i < selectedTypes.length; i++) {
+                let previousRatio = farmRatios[selectedTypes[i-1]];
+                let ratio = farmRatios[selectedTypes[i]];
+
+                let c = ratio/previousRatio;
+                x = (100*x)/(x + (100*c));
+            }
+            return x;
         };
 
         const checkCheckbox = (type, key) => singleVillageScavengeSettings[type][key] ? 'checked' : '';
         const fillInUnits = () => {
             $('.unitsInput').get().forEach(input => $(input).val('').trigger('change'));
-            const selectedTypes = $('.scavengeType:checked').get().filter(type => $(type).closest('.scavenge-option').has('.free_send_button').length > 0).map(type => Number($(type).data('scavengetype'))).toString();
+            const selectedTypes = $('.scavengeType:checked').get().filter(type => $(type).closest('.scavenge-option').has('.free_send_button').length > 0).map(type => Number($(type).data('scavengetype')));
 
             if(selectedTypes.length) {
                 const currentOption = $('.free_send_button').closest('.scavenge-option').has('.scavengeType:checked').last().index() + 1;
-                const currentPercentage = singleVillageFormulas[selectedTypes][currentOption];
+                const currentPercentage = calculatePercentage(selectedTypes);
 
                 Object.keys(singleVillageScavengeSettings['units'])
                     .filter(unit => singleVillageScavengeSettings['units'][unit])
