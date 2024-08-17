@@ -30,6 +30,14 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
             4: 0.75,
         };
 
+        const unitsInOrder = [
+            'axe',
+            'spear',
+            'light',
+            'sword',
+            'heavy',
+        ];
+
         const calculatePercentage = (selectedTypes) => {
             let x = 100;
             for (let i = 1; i < selectedTypes.length; i++) {
@@ -42,6 +50,14 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
             return x;
         };
 
+        const totalCarry = () => {
+            let totalCarry = 0;
+            unitsInOrder.filter(unit => singleVillageScavengeSettings['units'][unit]).forEach(unit => {
+                const amount = parseInt($(`.candidate-squad-container .units-entry-all[data-unit="${unit}"]`).text().trim().replaceAll(/\(|\)/g, ''));
+                totalCarry += (amount * carryUnits[unit]);
+            });
+            return totalCarry;
+        };
         const checkCheckbox = (type, key) => singleVillageScavengeSettings[type][key] ? 'checked' : '';
         const fillInUnits = () => {
             $('.unitsInput').get().forEach(input => $(input).val('').trigger('change'));
@@ -49,13 +65,20 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
 
             if(selectedTypes.length) {
                 const currentOption = $('.free_send_button').closest('.scavenge-option').has('.scavengeType:checked').last().index() + 1;
-                const currentPercentage = calculatePercentage(selectedTypes);
+                const currentPercentage = calculatePercentage(selectedTypes)/100;
+                let expectedCarryLeft = currentPercentage * totalCarry();
+                console.log('expected carry');
+                console.log(expectedCarryLeft);
 
-                Object.keys(singleVillageScavengeSettings['units'])
+                unitsInOrder
                     .filter(unit => singleVillageScavengeSettings['units'][unit])
                     .forEach(unit => {
                         const amount = parseInt($(`.candidate-squad-container .units-entry-all[data-unit="${unit}"]`).text().trim().replaceAll(/\(|\)/g, ''));
-                        const inputValue = Math.round(amount * currentPercentage / 100);
+                        let inputValue = Math.floor(expectedCarryLeft / carryUnits[unit]);
+                        if (inputValue > amount) {
+                            inputValue = amount;
+                        }
+                        expectedCarryLeft -= (inputValue * carryUnits[unit])
 
                         console.log(carryUnits[unit]);
 
@@ -64,8 +87,7 @@ ScriptAPI.register('Single Village Scavenge Tool', true, 'Kerouac', 'nl.tribalwa
             } else {
                 UI.ErrorMessage(`All scavenges are already running or none are selected.`);
             }
-
-        }
+        };
 
         if (!$('.scavengeSetting').length) {
             game_data.units.forEach(unit => $(`.unit_link[data-unit=${unit}]`).before(`<input type='checkbox' class='scavengeSetting unitCheckboxes' ${checkCheckbox('units', unit)} data-key='units' data-type='${unit}'>`));
